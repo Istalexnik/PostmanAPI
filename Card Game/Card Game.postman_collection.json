@@ -1,0 +1,441 @@
+{
+	"info": {
+		"_postman_id": "ba381ce8-5772-408b-b215-b4ffdd86dbca",
+		"name": "Card Game",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28142474"
+	},
+	"item": [
+		{
+			"name": "Check the status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check if the status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://deckofcardsapi.com",
+					"protocol": "https",
+					"host": [
+						"deckofcardsapi",
+						"com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Getb a New Deck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Check if the status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if the response body is valid\", function () {\r",
+							"\r",
+							"     pm.expect(response).to.have.property('success');\r",
+							"     pm.expect(response.success).to.be.true;\r",
+							"     \r",
+							"     pm.expect(response).to.have.property('shuffled');\r",
+							"     pm.expect(response.shuffled).to.be.false;\r",
+							"\r",
+							"     pm.expect(response).to.have.property('deck_id');\r",
+							"     \r",
+							"     pm.expect(response).to.have.property('remaining');\r",
+							"     pm.expect(response.remaining).to.eql(52);\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"deck_id\", response.deck_id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://deckofcardsapi.com/api/deck/new/",
+					"protocol": "https",
+					"host": [
+						"deckofcardsapi",
+						"com"
+					],
+					"path": [
+						"api",
+						"deck",
+						"new",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Shuffle it",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Check if the status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Check if the response body is valid\", function () { \r",
+							"     pm.expect(response).to.have.property('success');\r",
+							"     pm.expect(response.success).to.be.true;\r",
+							"     \r",
+							"     pm.expect(response).to.have.property('shuffled');\r",
+							"     pm.expect(response.shuffled).to.be.true;\r",
+							"\r",
+							"     pm.expect(response).to.have.property('remaining');\r",
+							"     pm.expect(response.remaining).to.eql(52);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://deckofcardsapi.com/api/deck/{{deck_id}}/shuffle/",
+					"protocol": "https",
+					"host": [
+						"deckofcardsapi",
+						"com"
+					],
+					"path": [
+						"api",
+						"deck",
+						"{{deck_id}}",
+						"shuffle",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deal Three Cards to the player #1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Check if the status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"3 cards drawn\", function () {\r",
+							"    pm.expect(response.cards.length).to.eql(3);\r",
+							"});\r",
+							"\r",
+							"    var hasAce = response.cards.some(card => card.value === 'ACE');\r",
+							"    var hasTen = response.cards.some(card => ['10', 'JACK', 'QUEEN', 'KING'].includes(card.value));\r",
+							"    \r",
+							"    if (hasAce && hasTen) {\r",
+							"        console.log('Player #1 has Blackjack');\r",
+							"    } \r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://deckofcardsapi.com/api/deck/{{deck_id}}/draw/?count=3",
+					"protocol": "https",
+					"host": [
+						"deckofcardsapi",
+						"com"
+					],
+					"path": [
+						"api",
+						"deck",
+						"{{deck_id}}",
+						"draw",
+						""
+					],
+					"query": [
+						{
+							"key": "count",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deal Three Cards to the player #2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Check if the status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"3 cards drawn\", function () {\r",
+							"    pm.expect(response.cards.length).to.eql(3);\r",
+							"});\r",
+							"\r",
+							"    var hasAce = response.cards.some(card => card.value === 'ACE');\r",
+							"    var hasTen = response.cards.some(card => ['10', 'JACK', 'QUEEN', 'KING'].includes(card.value));\r",
+							"    \r",
+							"    if (hasAce && hasTen) {\r",
+							"        console.log('Player #2 has Blackjack');\r",
+							"    } \r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://deckofcardsapi.com/api/deck/{{deck_id}}/draw/?count=3",
+					"protocol": "https",
+					"host": [
+						"deckofcardsapi",
+						"com"
+					],
+					"path": [
+						"api",
+						"deck",
+						"{{deck_id}}",
+						"draw",
+						""
+					],
+					"query": [
+						{
+							"key": "count",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "deck_id",
+			"value": ""
+		},
+		{
+			"key": "player1_card_5C_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_5C_suit",
+			"value": ""
+		},
+		{
+			"key": "player1_card_JD_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_JD_suit",
+			"value": ""
+		},
+		{
+			"key": "player1_card_9S_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_9S_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_0S_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_0S_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_0D_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_0D_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_KC_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_KC_suit",
+			"value": ""
+		},
+		{
+			"key": "player1_card_9C_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_9C_suit",
+			"value": ""
+		},
+		{
+			"key": "player1_card_3D_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_3D_suit",
+			"value": ""
+		},
+		{
+			"key": "player1_card_2D_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_2D_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_3H_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_3H_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_7H_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_7H_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_7D_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_7D_suit",
+			"value": ""
+		},
+		{
+			"key": "player1_card_3C_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_3C_suit",
+			"value": ""
+		},
+		{
+			"key": "player1_card_0S_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_0S_suit",
+			"value": ""
+		},
+		{
+			"key": "player1_card_JH_value",
+			"value": ""
+		},
+		{
+			"key": "player1_card_JH_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_9S_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_9S_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_JD_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_JD_suit",
+			"value": ""
+		},
+		{
+			"key": "player2_card_5S_value",
+			"value": ""
+		},
+		{
+			"key": "player2_card_5S_suit",
+			"value": ""
+		}
+	]
+}
